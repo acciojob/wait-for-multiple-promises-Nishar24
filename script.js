@@ -25,7 +25,7 @@ Promise.all(promises)
             timeCell.textContent = index + 1; // Assuming index starts from 0
             row.appendChild(promiseCell);
             row.appendChild(timeCell);
-            document.getElementById('resultTable').appendChild(row);
+            document.getElementById('output').appendChild(row);
         });
 
         // Add a row for the total time
@@ -36,7 +36,7 @@ Promise.all(promises)
         totalTimeCell.textContent = totalTime.toFixed(3);
         totalRow.appendChild(totalPromiseCell);
         totalRow.appendChild(totalTimeCell);
-        document.getElementById('resultTable').appendChild(totalRow);
+        document.getElementById('output').appendChild(totalRow);
     })
     .catch(error => {
         console.error('Error:', error);
