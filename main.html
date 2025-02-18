@@ -1,41 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Promise Results Table</title>
-  <style>
-    table {
-      width: 50%;
-      border-collapse: collapse;
-      margin: 20px auto;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise Timing Table</title>
+    <style>
+        table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 20px auto;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-  <h1 style="text-align: center;">Promise Results</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Promise</th>
-        <th>Time Taken (Seconds)</th>
-      </tr>
-    </thead>
-    <tbody id="output">
-      <tr>
-        <td colspan="2">Loading...</td>
-      </tr>
-    </tbody>
-  </table>
+    <table>
+        <thead>
+            <tr>
+                <th>Promise</th>
+                <th>Time Taken (Seconds)</th>
+            </tr>
+        </thead>
+        <tbody id="output">
+            <tr><td colspan="2">Loading...</td></tr>
+        </tbody>
+    </table>
 
-  <script src="script.js"></script>
+    <script>
+        function createPromise(index) {
+            const delay = Math.random() * 2 + 1; // Random delay between 1 and 3 seconds
+            return new Promise(resolve => {
+                setTimeout(() => resolve({ index, time: delay.toFixed(3) }), delay * 1000);
+            });
+        }
+
+        const promises = [createPromise(1), createPromise(2), createPromise(3)];
+
+        Promise.all(promises).then(results => {
+            const tbody = document.getElementById('output');
+            tbody.innerHTML = ''; // Clear loading row
+            
+            results.forEach(result => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td>Promise ${result.index}</td><td>${result.time}</td>`;
+                tbody.appendChild(row);
+            });
+            
+            const maxTime = Math.max(...results.map(r => parseFloat(r.time))).toFixed(3);
+            const totalRow = document.createElement('tr');
+            totalRow.innerHTML = `<td>Total</td><td>${maxTime}</td>`;
+            tbody.appendChild(totalRow);
+        });
+    </script>
 </body>
 </html>
