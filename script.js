@@ -1,43 +1,59 @@
 //your JS code here. If required.
+// Function to create a promise that resolves after a random delay
+function createPromise(delay) {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(delay);
+    }, delay * 1000); // Convert seconds to milliseconds
+  });
+}
+
+// Function to generate random delays between 1 and 3 seconds
+function getRandomDelay() {
+  return (Math.random() * 2 + 1).toFixed(3); // Random number between 1 and 3
+}
+
+// Create 3 promises with random delays
 const promises = [
-    new Promise(resolve => setTimeout(() => resolve('Promise 1'), Math.random() * 2000 + 1000)),
-    new Promise(resolve => setTimeout(() => resolve('Promise 2'), Math.random() * 2000 + 1000)),
-    new Promise(resolve => setTimeout(() => resolve('Promise 3'), Math.random() * 2000 + 1000))
+  createPromise(getRandomDelay()),
+  createPromise(getRandomDelay()),
+  createPromise(getRandomDelay()),
 ];
 
-const startTime = performance.now();
+// Wait for all promises to resolve
+Promise.all(promises).then((results) => {
+  // Get the table body element
+  const tableBody = document.getElementById("output");
 
-Promise.all(promises)
-    .then(results => {
-        const endTime = performance.now();
-        const totalTime = (endTime - startTime) / 1000;
+  // Remove the "Loading..." row
+  tableBody.innerHTML = "";
 
-        // Remove the loading row
-        const loadingRow = document.getElementById('loadingRow');
-        loadingRow.parentNode.removeChild(loadingRow);
+  // Add rows for each promise result
+  results.forEach((time, index) => {
+    const row = document.createElement("tr");
+    const promiseCell = document.createElement("td");
+    const timeCell = document.createElement("td");
 
-        // Add rows for each promise
-        results.forEach((result, index) => {
-            const row = document.createElement('tr');
-            const promiseCell = document.createElement('td');
-            const timeCell = document.createElement('td');
-            promiseCell.textContent = result;
-            timeCell.textContent = index + 1; // Assuming index starts from 0
-            row.appendChild(promiseCell);
-            row.appendChild(timeCell);
-            document.getElementById('output').appendChild(row);
-        });
+    promiseCell.textContent = `Promise ${index + 1}`;
+    timeCell.textContent = time;
 
-        // Add a row for the total time
-        const totalRow = document.createElement('tr');
-        const totalPromiseCell = document.createElement('td');
-        const totalTimeCell = document.createElement('td');
-        totalPromiseCell.textContent = 'Total';
-        totalTimeCell.textContent = totalTime.toFixed(3);
-        totalRow.appendChild(totalPromiseCell);
-        totalRow.appendChild(totalTimeCell);
-        document.getElementById('output').appendChild(totalRow);
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+    row.appendChild(promiseCell);
+    row.appendChild(timeCell);
+    tableBody.appendChild(row);
+  });
+
+  // Calculate the total time (maximum time among all promises)
+  const totalTime = Math.max(...results).toFixed(3);
+
+  // Add the "Total" row
+  const totalRow = document.createElement("tr");
+  const totalLabelCell = document.createElement("td");
+  const totalTimeCell = document.createElement("td");
+
+  totalLabelCell.textContent = "Total";
+  totalTimeCell.textContent = totalTime;
+
+  totalRow.appendChild(totalLabelCell);
+  totalRow.appendChild(totalTimeCell);
+  tableBody.appendChild(totalRow);
+});
